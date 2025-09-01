@@ -13,12 +13,12 @@ export async function POST(req: Request){
 
   Database: ${db}
   Framework: ${framework}
-  
+
   Generate backend models and CRUD routes matching the frontend.
   `;
 
   const stream = await groq.chat.completions.create({
-    model: "llama3-70b-8192", //model for code
+    model: "llama-3.3-70b-versatile", //model for code
     messages: [{ role: "user", content: prompt }],
     stream: true,
   });
