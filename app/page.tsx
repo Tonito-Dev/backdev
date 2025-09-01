@@ -3,31 +3,35 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function Home() {
   const [code, setCode] = useState(`// Welcome to Backend Generator!
-// Paste your frontend code here and we'll generate
-// the corresponding backend code.
+    // Paste your frontend code here and we'll generate
+    // the corresponding backend code.
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
+    interface User {
+    id: string;
+    name: string;
+    email: string;
+    }
 
-// Example API endpoints:
-// GET /api/users
-// POST /api/users
-// GET /api/users/:id`);
+    // Example API endpoints:
+    // GET /api/users
+    // POST /api/users
+    // GET /api/users/:id`);
   const [backendCode, setBackendCode] = useState("");
   const [db, setDb] = useState("postgres");
   const [framework, setFramework] = useState("express");
+  const [copied, setCopied] = useState<string | null>(null);
 
   const generateBackend = async () => {
-    setBackendCode(""); //reseting output
-    const res = await fetch("/api/generate",{
+    setBackendCode(""); // reset output
+    const res = await fetch("/api/generate", {
       method: "POST",
-      headers: { "Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, db, framework }),
     });
 
@@ -37,10 +41,25 @@ interface User {
     let result = "";
     while (true) {
       const { done, value } = await reader!.read();
-      if(done) break;
+      if (done) break;
       result += decoder.decode(value);
       setBackendCode(result);
     }
+  };
+
+  // Extracts ALL code blocks for "Copy All"
+  const extractAllCodeBlocks = (markdown: string) => {
+    const regex = /```[\s\S]*?\n([\s\S]*?)```/g;
+    const matches = [...markdown.matchAll(regex)];
+    return matches.map((m) => m[1].trim()).join("\n\n");
+  };
+
+  const handleCopyAll = async () => {
+    const codeOnly = extractAllCodeBlocks(backendCode);
+    if (!codeOnly) return;
+    await navigator.clipboard.writeText(codeOnly);
+    setCopied("all");
+    setTimeout(() => setCopied(null), 2000);
   };
 
   return (
@@ -55,7 +74,12 @@ interface User {
             </h1>
           </div>
           <div className="flex items-center space-x-4">
-            <a href="https://github.com/Tonito-Dev" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+            <a
+              href="https://github.com/Tonito-Dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
               <Image src="/globe.svg" alt="GitHub" width={24} height={24} />
             </a>
           </div>
@@ -128,11 +152,76 @@ interface User {
                 <Image src="/vercel.svg" alt="Output" width={20} height={20} />
                 Generated Backend
               </h2>
+              <button
+                onClick={handleCopyAll}
+                disabled={!backendCode}
+                className={`px-3 py-1 text-sm rounded transition-colors ${
+                  backendCode
+                    ? "bg-gray-700 hover:bg-gray-600"
+                    : "bg-gray-800 cursor-not-allowed"
+                }`}
+              >
+                {copied === "all" ? "Copied All!" : "Copy All"}
+              </button>
             </div>
-            <div className="flex-1 bg-black/50 rounded-lg border border-gray-800 overflow-hidden">
-              <pre className="p-6 h-[500px] overflow-y-auto font-mono text-sm leading-relaxed">
-                {backendCode || "Your generated backend code will appear here..."}
-              </pre>
+
+            <div className="flex-1 bg-black/50 rounded-lg border border-gray-800 overflow-hidden p-6 h-[500px] overflow-y-auto prose prose-invert max-w-none">
+              {backendCode ? (
+                <ReactMarkdown
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      const codeContent = String(children).replace(/\n$/, "");
+
+                      if (!inline && match) {
+                        return (
+                          <div className="relative group">
+                            {/* Copy Button */}
+                            <button
+                              onClick={async () => {
+                                await navigator.clipboard.writeText(codeContent);
+                                setCopied(codeContent);
+                                setTimeout(() => setCopied(null), 2000);
+                              }}
+                              className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600 opacity-0 group-hover:opacity-100 transition"
+                            >
+                              {copied === codeContent ? "Copied!" : "Copy"}
+                            </button>
+
+                            {/* Code Block */}
+                            <SyntaxHighlighter
+                              style={vscDarkPlus}
+                              language={match[1]}
+                              PreTag="div"
+                              customStyle={{
+                                margin: 0,
+                                borderRadius: "0.5rem",
+                                fontSize: "0.875rem",
+                                background: "#1e1e1e",
+                              }}
+                              {...props}
+                            >
+                              {codeContent}
+                            </SyntaxHighlighter>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {backendCode}
+                </ReactMarkdown>
+              ) : (
+                <div className="text-gray-500">
+                  Your generated backend code will appear here...
+                </div>
+              )}
             </div>
           </div>
         </div>
