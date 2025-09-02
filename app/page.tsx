@@ -157,7 +157,7 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="flex-1 bg-black/50 rounded-lg border border-gray-800 overflow-auto p-6 h-[500px] prose prose-invert max-w-none">
+            <div className="flex-1 bg-black/50 rounded-lg border border-gray-800 overflow-auto p-6 h-[500px] prose prose-invert max-w-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {backendCode ? (
                     <ReactMarkdown
                     components={{
@@ -171,7 +171,7 @@ export default function Home() {
                             return (
                             <div className="relative group mb-4">
                                 {/* Language Label */}
-                                <div className="absolute top-2 left-2 px-2 py-0.5 text-xs rounded bg-gray-700 text-gray-200 z-10">
+                                <div className="absolute top-2 left-2 px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-200 z-10">
                                 {languageLabel}
                                 </div>
 
@@ -182,13 +182,13 @@ export default function Home() {
                                     setCopied(codeContent);
                                     setTimeout(() => setCopied(null), 2000);
                                 }}
-                                className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600 opacity-0 group-hover:opacity-100 transition z-10"
+                                className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-800 hover:bg-gray-700 opacity-0 group-hover:opacity-100 transition z-10"
                                 >
                                 {copied === codeContent ? "Copied!" : "Copy"}
                                 </button>
 
                                 {/* Scrollable Code Block */}
-                                <div className="mt-6 max-h-[300px] overflow-auto rounded">
+                                <div className="mt-6 max-h-[300px] overflow-auto rounded [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                 <SyntaxHighlighter
                                     style={vscDarkPlus}
                                     language={match[1]}
