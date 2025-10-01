@@ -2,6 +2,8 @@
 
 A powerful AI-powered tool that helps frontend developers automatically generate backend code and database schemas from their frontend code. Built with Next.js, TypeScript, and GroqCloud's AI model.
 
+![Backend Generator UI](./Capture.PNG)
+
 ## ✨ Features
 
 - **🤖 AI-Powered Generation**: Uses GroqCloud's `llama-3.3-70b-versatile` model to generate high-quality backend code
