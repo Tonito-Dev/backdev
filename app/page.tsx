@@ -9,7 +9,6 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function Home() {
   const [code, setCode] = useState(`// Paste your frontend code here and we'll generate
-
     // Example API endpoints:
     // GET /api/users
     // POST /api/users
