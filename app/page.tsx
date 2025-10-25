@@ -147,83 +147,82 @@ export default function Home() {
               <button
                 onClick={handleCopyAll}
                 disabled={!backendCode}
-                className={`px-3 py-1 text-sm rounded transition-colors ${
-                  backendCode
-                    ? "bg-gray-700 hover:bg-gray-600"
-                    : "bg-gray-800 cursor-not-allowed"
-                }`}
+                className={`px-3 py-1 text-sm rounded transition-colors ${backendCode
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "bg-gray-800 cursor-not-allowed"
+                  }`}
               >
                 {copied === "all" ? "Copied All!" : "Copy All"}
               </button>
             </div>
 
             <div className="flex-1 bg-black/50 rounded-lg border border-gray-800 overflow-auto p-6 h-[500px] prose prose-invert max-w-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {backendCode ? (
-                    <ReactMarkdown
-                    components={{
-                        code({ node, inline, className, children, ...props }) {
-                        const match = /language-(\w+)/.exec(className || "");
-                        const codeContent = String(children).replace(/\n$/, "");
+              {backendCode ? (
+                <ReactMarkdown
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      const codeContent = String(children).replace(/\n$/, "");
 
-                        if (!inline && match) {
-                            const languageLabel = match[1].toUpperCase();
-
-                            return (
-                            <div className="relative group mb-4">
-                                {/* Language Label */}
-                                <div className="absolute top-2 left-2 px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-200 z-10">
-                                {languageLabel}
-                                </div>
-
-                                {/* Copy Button */}
-                                <button
-                                onClick={async () => {
-                                    await navigator.clipboard.writeText(codeContent);
-                                    setCopied(codeContent);
-                                    setTimeout(() => setCopied(null), 2000);
-                                }}
-                                className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-800 hover:bg-gray-700 opacity-0 group-hover:opacity-100 transition z-10"
-                                >
-                                {copied === codeContent ? "Copied!" : "Copy"}
-                                </button>
-
-                                {/* Scrollable Code Block */}
-                                <div className="mt-6 max-h-[300px] overflow-auto rounded [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                                <SyntaxHighlighter
-                                    style={vscDarkPlus}
-                                    language={match[1]}
-                                    PreTag="div"
-                                    customStyle={{
-                                    margin: 0,
-                                    borderRadius: "0.5rem",
-                                    fontSize: "0.875rem",
-                                    background: "#1e1e1e",
-                                    padding: "1rem",
-                                    }}
-                                    {...props}
-                                >
-                                    {codeContent}
-                                </SyntaxHighlighter>
-                                </div>
-                            </div>
-                            );
-                        }
+                      if (!inline && match) {
+                        const languageLabel = match[1].toUpperCase();
 
                         return (
-                            <code className={className} {...props}>
-                            {children}
-                            </code>
+                          <div className="relative group mb-4">
+                            {/* Language Label */}
+                            <div className="absolute top-2 left-2 px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-200 z-10">
+                              {languageLabel}
+                            </div>
+
+                            {/* Copy Button */}
+                            <button
+                              onClick={async () => {
+                                await navigator.clipboard.writeText(codeContent);
+                                setCopied(codeContent);
+                                setTimeout(() => setCopied(null), 2000);
+                              }}
+                              className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-gray-800 hover:bg-gray-700 opacity-0 group-hover:opacity-100 transition z-10"
+                            >
+                              {copied === codeContent ? "Copied!" : "Copy"}
+                            </button>
+
+                            {/* Scrollable Code Block */}
+                            <div className="mt-6 max-h-[300px] overflow-auto rounded [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                              <SyntaxHighlighter
+                                style={vscDarkPlus}
+                                language={match[1]}
+                                PreTag="div"
+                                customStyle={{
+                                  margin: 0,
+                                  borderRadius: "0.5rem",
+                                  fontSize: "0.875rem",
+                                  background: "#1e1e1e",
+                                  padding: "1rem",
+                                }}
+                                {...props}
+                              >
+                                {codeContent}
+                              </SyntaxHighlighter>
+                            </div>
+                          </div>
                         );
-                        },
-                    }}
-                    >
-                    {backendCode}
-                    </ReactMarkdown>
-                ) : (
-                    <div className="text-gray-500">
-                    Your generated backend code will appear here...
-                    </div>
-                )}
+                      }
+
+                      return (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {backendCode}
+                </ReactMarkdown>
+              ) : (
+                <div className="text-gray-500">
+                  Your generated backend code will appear here...
+                </div>
+              )}
             </div>
           </div>
         </div>
