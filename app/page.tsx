@@ -159,20 +159,19 @@ export default function Home() {
               {backendCode ? (
                 <ReactMarkdown
                   components={{
-                    code({ node, inline, className, children, ...props }) {
+                    code(props) {
+                      const { node, className, children, ...rest } = props;
                       const match = /language-(\w+)/.exec(className || "");
                       const codeContent = String(children).replace(/\n$/, "");
 
-                      if (!inline && match) {
+                      if (match) {
                         const languageLabel = match[1].toUpperCase();
-
                         return (
                           <div className="relative group mb-4">
                             {/* Language Label */}
                             <div className="absolute top-2 left-2 px-2 py-0.5 text-xs rounded bg-gray-800 text-gray-200 z-10">
                               {languageLabel}
                             </div>
-
                             {/* Copy Button */}
                             <button
                               onClick={async () => {
@@ -184,7 +183,6 @@ export default function Home() {
                             >
                               {copied === codeContent ? "Copied!" : "Copy"}
                             </button>
-
                             {/* Scrollable Code Block */}
                             <div className="mt-6 max-h-[300px] overflow-auto rounded [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                               <SyntaxHighlighter
@@ -198,7 +196,6 @@ export default function Home() {
                                   background: "#1e1e1e",
                                   padding: "1rem",
                                 }}
-                                {...props}
                               >
                                 {codeContent}
                               </SyntaxHighlighter>
@@ -208,7 +205,7 @@ export default function Home() {
                       }
 
                       return (
-                        <code className={className} {...props}>
+                        <code className={className} {...rest}>
                           {children}
                         </code>
                       );
